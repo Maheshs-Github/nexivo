@@ -1,0 +1,25 @@
+{
+  "name": "nexivo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Nexivo Technologies: company website + admin CMS (React, Express, Prisma, MySQL)",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c cyan,magenta \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
+    "setup": "npm install && npm --prefix server install && npm --prefix client install && npm --prefix server run prisma:generate && npm --prefix server run migrate:deploy && npm --prefix server run seed",
+    "seed": "npm --prefix server run seed",
+    "db:up": "docker compose up -d --wait",
+    "db:down": "docker compose stop",
+    "db:studio": "npm --prefix server run studio",
+    "db:migrate": "npm --prefix server run migrate:dev",
+    "typecheck": "npm --prefix server run typecheck && npm --prefix client run typecheck",
+    "build": "npm --prefix server run typecheck && npm --prefix client run build",
+    "start": "npm --prefix server start",
+    "test:api": "npm --prefix server run test:api"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.7"
+  }
+}

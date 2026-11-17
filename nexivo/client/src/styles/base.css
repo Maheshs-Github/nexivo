@@ -1,0 +1,36 @@
+@layer base {
+  * { @apply border-line; }
+  html { -webkit-text-size-adjust: 100%; text-rendering: optimizeLegibility; scroll-padding-top: calc(var(--nav-h) + 1rem); }
+  body {
+    @apply bg-bg text-text font-sans antialiased;
+    font-feature-settings: "cv11", "ss01";
+    min-height: 100dvh;
+  }
+  h1, h2, h3, h4 { @apply font-display text-text; text-wrap: balance; }
+  p { text-wrap: pretty; }
+  ::selection { background: color-mix(in oklab, var(--brand) 35%, transparent); color: var(--text); }
+
+  :focus-visible { outline: 2px solid var(--brand-2); outline-offset: 3px; border-radius: 6px; }
+  :focus:not(:focus-visible) { outline: none; }
+
+  img, video { max-width: 100%; height: auto; }
+  input, textarea, select, button { font: inherit; }
+
+  /* Lenis */
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-stopped { overflow: hidden; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Metric-matched fallbacks: when Sora/Inter swap in, text barely changes size (no layout shift, no late LCP). */
+@font-face { font-family: "Sora Fallback"; src: local("Arial"); size-adjust: 112%; ascent-override: 92%; descent-override: 26%; line-gap-override: 0%; }
+@font-face { font-family: "Inter Fallback"; src: local("Arial"); size-adjust: 107%; ascent-override: 90%; descent-override: 22%; line-gap-override: 0%; }

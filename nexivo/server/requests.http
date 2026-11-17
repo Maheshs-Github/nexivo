@@ -1,0 +1,243 @@
+### Nexivo API — open in VS Code with the REST Client extension (humao.rest-client).
+### Run "Login as admin" first: the session cookie is reused by the requests below.
+### For an automated run of all of these (plus negative tests): npm run test:api
+
+@api = http://localhost:4000/api
+@adminEmail = admin@nexivo.dev
+@adminPassword = Admin@12345
+@editorEmail = editor@nexivo.dev
+@editorPassword = Editor@12345
+
+########## Health & public ##########
+
+GET {{api}}/health
+
+###
+GET {{api}}/settings
+
+###
+GET {{api}}/nav
+
+###
+GET {{api}}/pages/home/sections
+
+###
+GET {{api}}/pages/about/sections
+
+###
+GET {{api}}/seo/home
+
+###
+GET {{api}}/services
+
+###
+GET {{api}}/services/web-development
+
+###
+GET {{api}}/testimonials
+
+###
+GET {{api}}/team
+
+###
+GET {{api}}/clients
+
+###
+GET {{api}}/projects
+
+###
+GET {{api}}/projects/fernhill-digital-onboarding
+
+###
+GET {{api}}/blogs?page=1&limit=6
+
+###
+GET {{api}}/blogs?q=cloud&category=cloud-devops
+
+###
+GET {{api}}/blogs?tag=security
+
+###
+GET {{api}}/blogs/shipping-llm-features-to-production
+
+### Draft post must be 404
+GET {{api}}/blogs/engineering-handbook-2027
+
+###
+GET {{api}}/categories
+
+###
+GET {{api}}/jobs
+
+###
+GET {{api}}/jobs/senior-full-stack-engineer
+
+###
+GET http://localhost:4000/sitemap.xml
+
+########## Forms ##########
+
+POST {{api}}/contact
+Content-Type: application/json
+
+{ "name": "Priya Test", "email": "priya@example.com", "company": "Acme", "subject": "New app", "message": "We would like to build a customer portal next quarter." }
+
+### Bad body -> 400 with field errors
+POST {{api}}/contact
+Content-Type: application/json
+
+{ "name": "", "email": "not-an-email", "subject": "", "message": "short" }
+
+### Apply (multipart). Replace ./sample.pdf with a real PDF path.
+POST {{api}}/jobs/1/apply
+Content-Type: multipart/form-data; boundary=----nexivo
+
+------nexivo
+Content-Disposition: form-data; name="name"
+
+Rohan Test
+------nexivo
+Content-Disposition: form-data; name="email"
+
+rohan@example.com
+------nexivo
+Content-Disposition: form-data; name="resume"; filename="resume.pdf"
+Content-Type: application/pdf
+
+< ./sample.pdf
+------nexivo--
+
+########## Auth ##########
+
+# @name loginAdmin
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{ "email": "{{adminEmail}}", "password": "{{adminPassword}}" }
+
+###
+GET {{api}}/auth/me
+
+### Wrong password -> 401 "Invalid email or password"
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{ "email": "{{adminEmail}}", "password": "nope" }
+
+########## Admin (requires the login above) ##########
+
+GET {{api}}/admin/dashboard/stats
+
+###
+GET {{api}}/admin/badges
+
+###
+GET {{api}}/admin/blogs?page=1&limit=20&sort=-updatedAt
+
+###
+POST {{api}}/admin/blogs
+Content-Type: application/json
+
+{ "title": "REST client post", "excerpt": "Created from requests.http", "content": "<h2>Hello</h2><p>World</p>", "tags": ["Testing"], "status": "DRAFT" }
+
+###
+PATCH {{api}}/admin/blogs/1/publish
+
+###
+PATCH {{api}}/admin/blogs/1/unpublish
+
+###
+GET {{api}}/admin/sections?page=HOME&sort=order&limit=50
+
+###
+PATCH {{api}}/admin/sections/reorder
+Content-Type: application/json
+
+{ "ids": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }
+
+###
+GET {{api}}/admin/services?q=cloud
+
+###
+POST {{api}}/admin/services
+Content-Type: application/json
+
+{ "title": "Data Engineering", "shortDesc": "Pipelines and warehouses.", "description": "<p>Batch and streaming.</p>", "icon": "database" }
+
+###
+PATCH {{api}}/admin/services/1
+Content-Type: application/json
+
+{ "isVisible": true }
+
+###
+GET {{api}}/admin/testimonials
+
+###
+GET {{api}}/admin/team
+
+###
+GET {{api}}/admin/clients
+
+###
+GET {{api}}/admin/projects
+
+###
+GET {{api}}/admin/categories
+
+###
+GET {{api}}/admin/tags
+
+###
+GET {{api}}/admin/jobs?status=OPEN
+
+###
+PATCH {{api}}/admin/jobs/1
+Content-Type: application/json
+
+{ "status": "CLOSED" }
+
+###
+GET {{api}}/admin/nav?location=HEADER
+
+###
+GET {{api}}/admin/seo
+
+###
+GET {{api}}/admin/applications?status=NEW
+
+###
+PATCH {{api}}/admin/applications/1/status
+Content-Type: application/json
+
+{ "status": "REVIEWING" }
+
+###
+GET {{api}}/admin/applications/1/resume
+
+###
+GET {{api}}/admin/messages?filter=unread
+
+###
+PATCH {{api}}/admin/messages/1/read
+Content-Type: application/json
+
+{ "isRead": true }
+
+###
+GET {{api}}/admin/media
+
+###
+GET {{api}}/admin/settings
+
+###
+PUT {{api}}/admin/settings/theme
+Content-Type: application/json
+
+{ "accent": "#6366F1", "defaultMode": "dark" }
+
+###
+GET {{api}}/admin/users
+
+###
+POST {{api}}/auth/logout

@@ -1,0 +1,332 @@
+// Nexivo CMS schema (Prisma 7, MySQL 8 / TiDB)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum JobStatus {
+  OPEN
+  CLOSED
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERN
+}
+
+enum ApplicationStatus {
+  NEW
+  REVIEWING
+  SHORTLISTED
+  REJECTED
+  HIRED
+}
+
+enum NavLocation {
+  HEADER
+  FOOTER
+}
+
+enum Page {
+  HOME
+  ABOUT
+  SERVICES
+  BLOG
+  CAREERS
+  CONTACT
+}
+
+enum SectionType {
+  // Home
+  HERO
+  CLIENTS
+  STATS
+  SERVICES
+  PROCESS
+  CASE_STUDIES
+  TESTIMONIALS
+  BLOGS
+  CTA
+  FAQ
+  RICHTEXT
+  // About
+  STORY
+  MISSION_VISION
+  VALUES
+  TIMELINE
+  TEAM
+  TECH_STACK
+  // Inner pages
+  PAGE_HEADER
+}
+
+model User {
+  id           Int        @id @default(autoincrement())
+  name         String     @db.VarChar(120)
+  email        String     @unique @db.VarChar(191)
+  passwordHash String     @db.VarChar(191)
+  role         Role       @default(EDITOR)
+  title        String?    @db.VarChar(120)
+  bio          String?    @db.Text
+  avatar       String?    @db.VarChar(500)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  posts        BlogPost[]
+}
+
+model SiteSetting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique @db.VarChar(100)
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model NavItem {
+  id        Int         @id @default(autoincrement())
+  label     String      @db.VarChar(80)
+  url       String      @db.VarChar(300)
+  order     Int         @default(0)
+  location  NavLocation @default(HEADER)
+  group     String?     @db.VarChar(80)
+  isVisible Boolean     @default(true)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([location, order])
+}
+
+model Section {
+  id        Int         @id @default(autoincrement())
+  page      Page
+  type      SectionType
+  label     String?     @db.VarChar(120)
+  order     Int         @default(0)
+  isVisible Boolean     @default(true)
+  content   Json
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([page, order])
+}
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(150)
+  slug        String   @unique @db.VarChar(191)
+  shortDesc   String   @db.VarChar(400)
+  description String   @db.Text
+  features    Json?
+  icon        String   @default("code") @db.VarChar(60)
+  image       String?  @db.VarChar(500)
+  order       Int      @default(0)
+  isVisible   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isVisible, order])
+}
+
+model Testimonial {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(120)
+  role      String   @db.VarChar(120)
+  company   String   @db.VarChar(120)
+  avatar    String?  @db.VarChar(500)
+  quote     String   @db.Text
+  rating    Int      @default(5)
+  order     Int      @default(0)
+  isVisible Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TeamMember {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(120)
+  role      String   @db.VarChar(120)
+  bio       String?  @db.Text
+  photo     String?  @db.VarChar(500)
+  linkedin  String?  @db.VarChar(300)
+  order     Int      @default(0)
+  isVisible Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ClientLogo {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(120)
+  logo      String   @db.VarChar(500)
+  url       String?  @db.VarChar(300)
+  order     Int      @default(0)
+  isVisible Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(150)
+  slug      String   @unique @db.VarChar(191)
+  client    String?  @db.VarChar(120)
+  industry  String?  @db.VarChar(120)
+  summary   String   @db.VarChar(500)
+  content   String   @db.Text
+  cover     String?  @db.VarChar(500)
+  techStack Json?
+  metrics   Json?
+  liveUrl   String?  @db.VarChar(300)
+  order     Int      @default(0)
+  isVisible Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id        Int        @id @default(autoincrement())
+  name      String     @db.VarChar(80)
+  slug      String     @unique @db.VarChar(120)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  posts     BlogPost[]
+}
+
+model Tag {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(80)
+  slug      String    @unique @db.VarChar(120)
+  createdAt DateTime  @default(now())
+  posts     PostTag[]
+}
+
+model BlogPost {
+  id             Int        @id @default(autoincrement())
+  title          String     @db.VarChar(200)
+  slug           String     @unique @db.VarChar(191)
+  excerpt        String     @db.VarChar(500)
+  content        String     @db.LongText
+  coverImage     String?    @db.VarChar(500)
+  status         PostStatus @default(DRAFT)
+  publishedAt    DateTime?
+  authorId       Int?
+  categoryId     Int?
+  seoTitle       String?    @db.VarChar(200)
+  seoDescription String?    @db.VarChar(300)
+  readTime       Int        @default(1)
+  views          Int        @default(0)
+  featured       Boolean    @default(false)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  author         User?      @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  category       Category?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags           PostTag[]
+
+  @@index([authorId])
+  @@index([categoryId])
+  @@index([status, publishedAt])
+}
+
+model PostTag {
+  postId Int
+  tagId  Int
+  post   BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+  @@index([tagId])
+}
+
+model Job {
+  id           Int           @id @default(autoincrement())
+  title        String        @db.VarChar(150)
+  slug         String        @unique @db.VarChar(191)
+  department   String        @db.VarChar(80)
+  location     String        @db.VarChar(120)
+  type         JobType       @default(FULL_TIME)
+  experience   String        @db.VarChar(80)
+  salary       String?       @db.VarChar(80)
+  summary      String        @db.VarChar(400)
+  description  String        @db.Text
+  requirements String        @db.Text
+  status       JobStatus     @default(OPEN)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  applications Application[]
+
+  @@index([status, createdAt])
+}
+
+model Application {
+  id          Int               @id @default(autoincrement())
+  jobId       Int
+  name        String            @db.VarChar(120)
+  email       String            @db.VarChar(191)
+  phone       String?           @db.VarChar(40)
+  linkedin    String?           @db.VarChar(300)
+  resumeUrl   String            @db.VarChar(300)
+  resumeData  Bytes?            @db.MediumBlob
+  coverLetter String?           @db.Text
+  status      ApplicationStatus @default(NEW)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  job         Job               @relation(fields: [jobId], references: [id], onDelete: Restrict)
+
+  @@index([jobId])
+  @@index([status, createdAt])
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(120)
+  email     String   @db.VarChar(191)
+  phone     String?  @db.VarChar(40)
+  company   String?  @db.VarChar(120)
+  subject   String   @db.VarChar(200)
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([isRead, createdAt])
+}
+
+model Media {
+  id        Int      @id @default(autoincrement())
+  url       String   @db.VarChar(500)
+  filename  String   @db.VarChar(255)
+  mimeType  String   @db.VarChar(100)
+  size      Int
+  width     Int?
+  height    Int?
+  alt       String?  @db.VarChar(255)
+  // Source of truth for uploaded bytes: the server disk is only a cache (free hosts wipe it on redeploy)
+  data      Bytes?   @db.LongBlob
+  createdAt DateTime @default(now())
+
+  @@index([filename])
+}
+
+model PageSEO {
+  id          Int      @id @default(autoincrement())
+  page        Page     @unique
+  title       String   @db.VarChar(200)
+  description String   @db.VarChar(300)
+  ogImage     String?  @db.VarChar(500)
+  updatedAt   DateTime @updatedAt
+}

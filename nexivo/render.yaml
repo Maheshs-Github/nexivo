@@ -1,0 +1,30 @@
+# Render Blueprint for the Nexivo API (Dashboard → New → Blueprint → pick this repo).
+# Values marked sync:false are entered by you in the Render dashboard; they are never stored in git.
+services:
+  - type: web
+    name: nexivo-api
+    runtime: node
+    plan: free
+    rootDir: server
+    # devDependencies (prisma CLI, typescript) are needed at build time, so include them explicitly.
+    buildCommand: npm ci --include=dev && npx prisma generate && npx prisma migrate deploy
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL # TiDB Cloud connection string with ?sslaccept=strict
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: CLIENT_URL # your Vercel URL, e.g. https://nexivo.vercel.app (comma-separate several)
+        sync: false
+      - key: SITE_URL # same Vercel URL (used for sitemap and robots.txt)
+        sync: false
+      - key: TRUST_PROXY # Vercel rewrite + Render load balancer = 2 hops
+        value: "2"
