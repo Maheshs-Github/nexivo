@@ -27,7 +27,8 @@ export const resources: Record<string, CrudConfig> = {
   nav: { model: "navItem", label: "Menu item", schema: s(navSchema), searchFields: ["label", "url"], orderable: true, sortable: ["order", "label"], filters: { location: "string", isVisible: "bool" } },
   sections: {
     model: "section", label: "Section", schema: s(sectionSchema), searchFields: ["label"], orderable: true, sortable: ["order", "updatedAt"],
-    filters: { page: "string", type: "string", isVisible: "bool" },
+    filters: { pageKey: "string", type: "string", isVisible: "bool" },
+    filterAlias: { pageKey: "page" },
     patchSchema: s(z.object({ isVisible: z.boolean().optional(), label: z.string().trim().max(120).optional() })),
     // RICHTEXT sections carry HTML inside their JSON content: sanitise it like every other rich field.
     transform: (data) => {

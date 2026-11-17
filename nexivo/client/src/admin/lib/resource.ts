@@ -26,11 +26,11 @@ export function useItem<T>(resource: string, id: number | null | undefined) {
 }
 
 const invalidateAll = (qc: ReturnType<typeof useQueryClient>, resource: string) => {
-  qc.invalidateQueries({ queryKey: ["admin", resource] });
+  qc.invalidateQueries({ queryKey: ["admin", resource], refetchType: "all" });
   qc.invalidateQueries({ queryKey: ["admin", "badges"] });
   qc.invalidateQueries({ queryKey: ["admin", "dashboard"] });
   // Public caches too, so "View site" shows the change immediately.
-  qc.invalidateQueries({ queryKey: ["public"] });
+  qc.invalidateQueries({ queryKey: ["public"], refetchType: "all" });
 };
 
 const onError = (e: unknown) => {

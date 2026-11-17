@@ -24,7 +24,12 @@ export default function Login() {
   const from = (location.state as { from?: string } | null)?.from ?? "/admin";
   const [show, setShow] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<Values>({ resolver: zodResolver(loginBody) });
+  const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<Values>({ resolver: zodResolver(loginBody) });
+
+  const fillAdmin = () => {
+    setValue("email", "admin@nexivo.dev", { shouldValidate: true, shouldDirty: true });
+    setValue("password", "Admin@12345", { shouldValidate: true, shouldDirty: true });
+  };
 
   if (!loading && user) return <Navigate to={from.startsWith("/admin") && !from.startsWith("/admin/login") ? from : "/admin"} replace />;
 
@@ -68,6 +73,29 @@ export default function Login() {
           <Button type="submit" className="h-10 w-full" disabled={isSubmitting}>
             {isSubmitting && <LoaderCircle className="animate-spin" />}{isSubmitting ? "Signing in" : "Sign in"}
           </Button>
+
+          <div className="rounded-xl border border-line bg-surface/50 p-3 text-xs">
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-text">Admin credentials</span>
+              <button
+                type="button"
+                onClick={fillAdmin}
+                className="font-medium text-brand-text hover:underline"
+              >
+                Auto-fill
+              </button>
+            </div>
+            <div className="mt-1.5 space-y-1 font-mono text-[11px] text-text-muted">
+              <div className="flex justify-between">
+                <span>Email:</span>
+                <span className="select-all font-semibold text-text">admin@nexivo.dev</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Password:</span>
+                <span className="select-all font-semibold text-text">Admin@12345</span>
+              </div>
+            </div>
+          </div>
         </form>
         <p className="mt-6 text-center text-xs text-text-muted"><a href="/" className="hover:text-text">← Back to website</a></p>
       </main>

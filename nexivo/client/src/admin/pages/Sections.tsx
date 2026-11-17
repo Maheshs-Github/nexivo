@@ -24,7 +24,7 @@ const summary = (s: SectionRow) => String(s.content.heading ?? s.content.headlin
 export default function Sections() {
   const [params, setParams] = useSearchParams();
   const page = (PAGES.includes(params.get("page") as PageKey) ? params.get("page") : "HOME") as PageKey;
-  const { data, isLoading, isError, refetch } = useList<SectionRow>("sections", { page, limit: 100, sort: "order" });
+  const { data, isLoading, isError, refetch } = useList<SectionRow>("sections", { pageKey: page, limit: 100, sort: "order" });
   const reorder = useReorder("sections");
   const toggle = usePatch("sections");
   const remove = useRemove("sections");

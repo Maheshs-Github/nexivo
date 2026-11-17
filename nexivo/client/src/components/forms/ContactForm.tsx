@@ -16,17 +16,26 @@ export default function ContactForm() {
   const [sent, setSent] = useState(false);
   const { register, handleSubmit, setError, reset, formState: { errors, isSubmitting } } = useForm<Values>({ resolver: zodResolver(contactBody) });
 
-  const onSubmit = handleSubmit(async (values) => {
-    try {
-      const res = await api.post("/contact", values);
-      toast.success(res.message ?? "Message sent");
-      reset();
-      setSent(true);
-    } catch (err) {
-      const e = err as ApiError;
-      if (!applyServerErrors(e.errors, setError as never)) toast.error(e.message);
+  const onSubmit = handleSubmit(
+    async (values) => {
+      try {
+        const payload = { ...values };
+        if (!payload.website) delete (payload as Record<string, unknown>).website;
+        const res = await api.post("/contact", payload);
+        toast.success(res.message ?? "Message sent");
+        reset();
+        setSent(true);
+      } catch (err) {
+        const e = err as ApiError;
+        if (!applyServerErrors(e.errors, setError as never)) toast.error(e.message || "Failed to submit message");
+      }
+    },
+    (invalidErrors) => {
+      console.warn("Contact form validation failed:", invalidErrors);
+      const firstMsg = Object.values(invalidErrors)[0]?.message;
+      if (firstMsg) toast.error(String(firstMsg));
     }
-  });
+  );
 
   if (sent) {
     return (

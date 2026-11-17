@@ -31,6 +31,8 @@ export interface CrudConfig {
   defaultSort?: string;
   /** Query keys that become exact-match filters. "bool" values are parsed from "true"/"false". */
   filters?: Record<string, "string" | "bool">;
+  /** Maps a query-param name to a different Prisma field name (e.g. "pageKey" → "page"). */
+  filterAlias?: Record<string, string>;
   orderable?: boolean;
   slugFrom?: string;
   richFields?: string[];
@@ -65,7 +67,8 @@ export function crudRouter(cfg: CrudConfig) {
     for (const [key, kind] of Object.entries(cfg.filters ?? {})) {
       const raw = q[key];
       if (typeof raw !== "string" || raw === "") continue;
-      where[key] = kind === "bool" ? raw === "true" : raw;
+      const dbField = cfg.filterAlias?.[key] ?? key;
+      where[dbField] = kind === "bool" ? raw === "true" : raw;
     }
     return where;
   }

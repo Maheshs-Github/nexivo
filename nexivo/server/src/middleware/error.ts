@@ -20,6 +20,7 @@ function zodFieldErrors(err: ZodError) {
 
 export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
   if (err instanceof ZodError) {
+    if (!isProd) console.warn(`[validation error] ${req.method} ${req.path}:`, zodFieldErrors(err));
     return res.status(400).json({ success: false, message: "Please check the highlighted fields", errors: zodFieldErrors(err) });
   }
   if (err instanceof HttpError) {

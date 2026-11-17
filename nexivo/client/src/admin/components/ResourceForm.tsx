@@ -38,7 +38,7 @@ export function ResourceForm({ config, row, onDone, onCancel, onDirtyChange }: P
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={onSubmit} noValidate className="flex h-full flex-col">
+      <form onSubmit={onSubmit} noValidate className="flex flex-1 min-h-0 flex-col">
         <div className="grid flex-1 content-start gap-4 overflow-y-auto p-5 sm:grid-cols-2">
           <FormFields fields={config.fields} />
         </div>

@@ -3,7 +3,7 @@ import { optStr, reqStr } from "./common.js";
 
 /** Bots fill every field; humans never see "website". */
 const honeypot = { website: z.string().max(0, "Spam detected").optional() };
-const phone = z.string().trim().max(40).regex(/^[0-9+()\-\s]*$/, "Use digits, spaces, +, - or ()")
+const phone = z.string().trim().max(40).regex(/^[0-9+()\-\s.]*$/, "Use digits, spaces, +, -, . or ()")
   .optional().nullable().transform((v) => (v ? v : null));
 const email = z.email("Enter a valid email").max(191);
 

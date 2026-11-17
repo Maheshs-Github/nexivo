@@ -34,8 +34,9 @@ TextArea.displayName = "TextArea";
 /** Hidden from people, irresistible to bots. The API rejects submissions that fill it. */
 export function Honeypot({ register }: { register: object }) {
   return (
-    <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
-      <label>Website<input type="text" tabIndex={-1} autoComplete="off" {...register} /></label>
+    <div aria-hidden="true" className="pointer-events-none absolute -left-[9999px] h-0 w-0 opacity-0 overflow-hidden select-none" tabIndex={-1}>
+      <label htmlFor="ct-hp-website" className="sr-only">Leave this field empty</label>
+      <input id="ct-hp-website" type="text" tabIndex={-1} autoComplete="new-password" {...register} />
     </div>
   );
 }
