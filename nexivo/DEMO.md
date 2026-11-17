@@ -2,7 +2,7 @@
 
 ## Pre-demo checklist (10 minutes before)
 
-- [ ] Open `https://<your-vercel-app>/api/health` and wait for `"database":"up"`. This wakes the free Render API; the first request can take 30–60 s.
+- [ ] Open `https://nexivo-gilt.vercel.app/api/health` and wait for `"database":"up"`. This wakes the free Render API; the first request can take 30–60 s.
 - [ ] Open the home page once so images are cached.
 - [ ] Sign in at `/admin` in a second tab (**admin@nexivo.dev** / your demo password).
 - [ ] Have a small PDF resume on the desktop (any PDF under 5 MB).

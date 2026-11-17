@@ -4,6 +4,11 @@ A premium IT-company website (Home, About, Services, Blog, Careers, Contact) whe
 
 > Tagline: *Engineering what's next.* All copy, people and client logos are fictional placeholders you can change in **Admin → Settings / Pages & sections**.
 
+## Live demo
+
+- **Website:** https://nexivo-gilt.vercel.app
+- **Admin panel:** https://nexivo-gilt.vercel.app/admin/ (login: `admin@nexivo.dev` / `Showcase-Nexivo-26`, demo-only)
+
 ## Highlights
 
 - **Fully content-managed:** page sections (hero, stats, services bento, process, case studies, testimonials, FAQ, CTA, about-page blocks) are JSON documents validated by shared Zod schemas. The admin forms and the public site use the same contracts.
